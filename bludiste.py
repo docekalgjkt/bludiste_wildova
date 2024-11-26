@@ -6,7 +6,7 @@ class Bludiste:
         self.path_found = False
 
     def find_position(self, value):
-        """Najde pozici startu nebo východu."""
+        #Najde pozici startu nebo východu.
         for x, row in enumerate(self.maze):
             for y, cell in enumerate(row):
                 if cell == value:
@@ -14,11 +14,11 @@ class Bludiste:
         return None
 
     def can_move_to(self, x, y):
-        """Kontroluje, zda je možné se pohybovat na danou pozici."""
+        #Kontroluje, zda je možné se pohybovat na danou pozici.
         return 0 <= x < len(self.maze) and 0 <= y < len(self.maze[0]) and (self.maze[x][y] == 0 or self.maze[x][y] == 3)
 
     def flood_fill(self, x, y):
-        """Rekurzivní algoritmus pro hledání východu."""
+        #Rekurzivní algoritmus pro hledání východu.
         if not self.can_move_to(x, y) or self.path_found:
             return
         if (x, y) == self.exit:

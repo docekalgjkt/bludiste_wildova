@@ -1,9 +1,29 @@
+import tkinter as tk
+from collections import deque
+import numpy as np
+
+
 class Robot:
-    def __init__(self, maze, start, finish):
+    def __init__(self, maze):
         self.maze = maze
-        self.position = start  # pozice robota ve formátu (řádek, sloupec)
-        self.finish = finish  # pozice cíle ve formátu (řádek, sloupec)
+        self.position = self.find_start()  # Automaticky najde start
+        self.finish = self.find_finish()  # Automaticky najde cíl
         self.path = []  # seznam pro ukládání cesty robota
+
+    def find_start(self):
+        """Najde startovní pozici (označeno jako '8')."""
+        result = np.where(self.maze == 8)
+        if result[0].size > 0:
+            return (result[0][0], result[1][0])  # Vrací první výskyt
+        return None
+
+    def find_finish(self):
+        """Najde cílovou pozici (označeno jako '3')."""
+        for r in range(len(self.maze)):
+            for c in range(len(self.maze[0])):
+                if self.maze[r][c] == 3:
+                    return (r, c)
+        return None
 
     def move(self, direction):
         """Pohyb robota v maze podle zadaného směru (nahoru, dolů, vlevo, vpravo)."""
@@ -22,8 +42,6 @@ class Robot:
 
     def flood_fill(self):
         """Flood Fill algoritmus pro nalezení cesty v bludišti."""
-        # Inicializace fronty a navštívených buněk
-        from collections import deque
         queue = deque([(self.position, [])])
         visited = set()
         visited.add(self.position)
@@ -48,3 +66,61 @@ class Robot:
 
         # Pokud není cesta nalezena
         return None
+
+    def follow_path(self, path):
+        """Simuluje pohyb robota po nalezené cestě."""
+        for direction in path:
+            self.move(direction)
+
+    def find_and_move_to_finish(self):
+        """Najde cestu a následně se přesune k cíli."""
+        path = self.flood_fill()
+        if path:
+            self.follow_path(path)
+            return self.path
+        else:
+            return None
+
+
+def draw_maze(canvas, maze, robot_pos, square_size=50):
+    """Vykreslí bludiště na canvasu."""
+    for row in range(len(maze)):
+        for col in range(len(maze[0])):
+            color = "white" if maze[row][col] == 0 else "black"
+            if maze[row][col] == 8:
+                color = "green"  # Start je zelený
+            elif maze[row][col] == 3:
+                color = "red"  # Cíl je červený
+            canvas.create_rectangle(col * square_size, row * square_size,
+                                    (col + 1) * square_size, (row + 1) * square_size,
+                                    fill=color)
+
+    # Vykreslí robota
+    robot_row, robot_col = robot_pos
+    canvas.create_oval(robot_col * square_size + 5, robot_row * square_size + 5,
+                       (robot_col + 1) * square_size - 5, (robot_row + 1) * square_size - 5,
+                       fill="blue")
+
+
+def animate_robot(canvas, robot, square_size=50):
+    """Animuje pohyb robota po cestě."""
+    path = robot.find_and_move_to_finish()
+    if path:
+        for position in path:
+            robot.position = position
+            canvas.delete("all")  # Vymaže vše před novým vykreslením
+            draw_maze(canvas, robot.maze, robot.position)  # Vykreslí bludiště a robota
+            canvas.after(500)  # Pauza mezi kroky
+            canvas.update()
+
+
+def start_robot(maze, canvas):
+    # Maze s novými hodnotami
+
+    robot = Robot(maze)
+
+    # Vykreslí počáteční stav
+    draw_maze(canvas, maze, robot.position)
+
+    # Spustí animaci robota
+    animate_robot(canvas, robot)

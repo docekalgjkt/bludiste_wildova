@@ -217,9 +217,6 @@ class MazeApp:
         self.frame = tk.Frame(root)
         self.frame.pack(side="right")
 
-        self.button_start = tk.Button(self.frame, text="Start", width=10, height=4)
-        self.button_start.pack()
-
 
 class Maze:
     def __init__(self, level):
@@ -287,6 +284,9 @@ mazeDAO = MazeDAOCSV("levels.csv")
 # replace 1 with desired level (1)
 maze = Maze(1)
 maze_view = MazeView(root)
+from Robot import start_robot
+start_robot(maze.maze,maze_view.canvas)
+
 
 
 if __name__ == "__main__":

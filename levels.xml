@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<levels><maze name="3x3">
+  <level number="1"/>
+  <row id="0">
+    <cell number="8"/>
+    <cell number="1"/>
+    <cell number="0"/>
+  </row>
+  <row id="1">
+    <cell number="0"/>
+    <cell number="1"/>
+    <cell number="3"/>
+  </row>
+  <row id="2">
+    <cell number="0"/>
+    <cell number="0"/>
+    <cell number="0"/>
+  </row>
+</maze>
+</levels>
